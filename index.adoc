@@ -1,0 +1,383 @@
+= Consultas de ejemplo básicas para practicar SQL
+Bases de datos. Universidad de Almería
+:doctype: article
+:encoding: utf-8
+:lang: en
+:toc: left
+:numbered:
+
+== Caso de uso Banco
+
+=== Modelo de datos
+
+image::banco/banco.svg[Modelo de datos del banco]
+
+=== Datos de ejemplo
+
+*Sucursales*
+
+[format="csv",options="header"]
+|===================================================
+include::banco/Sucursales.csv[]
+|===================================================
+
+*Empleados*
+
+[format="csv",options="header"]
+|===================================================
+include::banco/Empleados.csv[]
+|===================================================
+
+*Clientes*
+
+[format="csv",options="header"]
+|===================================================
+include::banco/Clientes.csv[]
+|===================================================
+
+*Cuentas*
+
+[format="csv",options="header"]
+|===================================================
+include::banco/Cuentas.csv[]
+|===================================================
+
+*CtaCli*
+
+[format="csv",options="header"]
+|===================================================
+include::banco/CtaCli.csv[]
+|===================================================
+
+*Transacciones*
+
+[format="csv",options="header"]
+|===================================================
+include::banco/Transacciones.csv[]
+|===================================================
+
+=== Consultas básicas
+
+.Mostrar todas las sucursales
+====
+[source, sql]
+include::banco/MostrarTodasSucursales.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/MostrarTodasSucursales.csv[]
+|===================================================
+
+.Mostrar las sucursales de la ciudad _Horseneck_ 
+====
+[source, sql]
+include::banco/MostrarSucursalesHorseneck.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/MostrarSucursalesHorseneck.csv[]
+|===================================================
+
+.Mostrar todos los nombres de las sucursales
+====
+[source, sql]
+include::banco/MostrarNombresSucursales.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/MostrarNombresSucursales.csv[]
+|===================================================
+
+.Mostrar todas las sucursales diferentes en las que haya empleados trabajando
+====
+[source, sql]
+include::banco/MostrarSucursalesEmpleados.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/MostrarSucursalesEmpleados.csv[]
+|===================================================
+
+.Mostrar los datos de las cuentas con las columnas actuales y una nueva columna denominada _saldoEnDolares_ que sea el saldo de la cuenta en dólares
+====
+[source, sql]
+include::banco/SaldoEnDolares.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/SaldoEnDolares.csv[]
+|===================================================
+
+.Mostrar los nombres de la sucursales y sus activos de las sucursales de la ciudad _Horseneck_ y con un activo superior a 1000000
+====
+[source, sql]
+include::banco/MostrarSucursalesHorseneckActivos.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/MostrarSucursalesHorseneckActivos.csv[]
+|===================================================
+
+.Mostrar las filas de las sucursales que estén en la ciudad de Horseneck o Brooklyn
+====
+[source, sql]
+include::banco/MostrarSucursalesHorseneckBrooklyn.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/MostrarSucursalesHorseneckBrooklyn.csv[]
+|===================================================
+
+.Usar el operador IN para mostrar las filas de las sucursales que estén en las ciudades de Horseneck, Brooklyn o Rye
+====
+[source, sql]
+include::banco/MostrarSucursalesUsandoIN.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/MostrarSucursalesUsandoIN.csv[]
+|===================================================
+
+.Devolver las filas que no estén en la ciudad de Horseneck o Brooklyn
+====
+[source, sql]
+include::banco/MostrarSucursalesNoEnHorseckBrooklyn.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/MostrarSucursalesNoEnHorseckBrooklyn.csv[]
+|===================================================
+
+.Devolver las filas de las sucursales ordenadas por nombre de sucursal
+====
+[source, sql]
+include::banco/OrdenacionUnCriterio.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/OrdenacionUnCriterio.csv[]
+|===================================================
+
+.Devolver las filas de las sucursales de la ciudad de Brooklyn y Horseneck ordenadas por ciudad y activo, ordenando el activo de forma descendente
+====
+[source, sql]
+include::banco/OrdenacionVariosCriterios.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/OrdenacionVariosCriterios.csv[]
+|===================================================
+
+.Devolver las filas de clientes que vivan en cualquier número de la calle _Paseo de la Alameda_
+====
+[source, sql]
+include::banco/LikeEmpiezaPor.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/LikeEmpiezaPor.csv[]
+|===================================================
+
+.Devolver las filas de clientes que vivan en cualquier calle _Alameda_
+====
+[source, sql]
+include::banco/LikeContiene.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/LikeContiene.csv[]
+|===================================================
+
+.Devolver las filas de clientes que vivan en el número _1_ de cualquier calle
+====
+[source, sql]
+include::banco/LikeTermina.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/LikeTermina.csv[]
+|===================================================
+
+=== Combinación de tablas
+
+.Realizar el produto cartesianos de las tablas _Sucursales_ y _Empleados_ para entender cómo se combinan las filas de las tablas
+====
+[source, sql]
+include::banco/ProductoCartesianoSucursalesEmpleados.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/ProductoCartesianoSucursalesEmpleados.csv[]
+|===================================================
+
+.El operador `CROSS JOIN`
+****
+El operador `CROSS JOIN` es equivalente al producto cartesiano. Se puede usar para combinar todas las filas de dos tablas. Realmente, no aporta nada nuevo, ya que el producto cartesiano se puede obtener simplemente listando las tablas en la cláusula `FROM`. Sin embargo, se puede usar para hacer explícito que se está realizando un producto cartesiano.
+
+====
+[source, sql]
+include::banco/ProductoCartesianoSucursalesEmpleadosCROSSJOIN.sql[]
+====
+****
+
+.Mostrar los nombres de los empleados que trabajan en la sucursal de la ciudad de _Horseneck_. Mostrar la sucursal y el nombre del empleado ordenados por sucursal y nombre de empleado
+====
+[source, sql]
+include::banco/EmpleadosQueTrabajanEnHorseneck.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/EmpleadosQueTrabajanEnHorseneck.csv[]
+|===================================================
+
+.Reescritura de la consulta anterior usando JOIN
+====
+[source, sql]
+include::banco/EmpleadosQueTrabajanEnHorseneckConJoin.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/EmpleadosQueTrabajanEnHorseneck.csv[]
+|===================================================
+
+.Uso de `NATURAL JOIN`
+****
+La consulta anterior se puede reescribir usando `NATURAL JOIN`, que combina las columnas con el mismo nombre. Sin embargo, **no es recomendable usar `NATURAL JOIN` en la práctica**, ya que puede realizar combinaciones no deseadas en tablas que tengan columnas con el mismo nombre, pero no sean las columnas con las que se quiere hacer la combinación.
+
+====
+[source, sql]
+include::banco/NaturalJoinSucursalesEmpleados.sql[]
+====
+****
+
+.Combinar todas las sucursales con todos sus empleados. Completar con NULL aquellas sucursales que no contengan empleados.
+====
+[source, sql]
+include::banco/LeftJoinSucursalesEmpleados.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/LeftJoinSucursalesEmpleados.csv[]
+|===================================================
+
+.Nombres de empleados que trabajan en la misma sucursal que _Smith_
+====
+[source, sql]
+include::banco/EmpleadosQueTrabajanConSmith.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/EmpleadosQueTrabajanConSmith.csv[]
+|===================================================
+
+.Nombres de sucursales y activos de las sucursales que tengan un activo superior a las sucursales de la ciudad de _Horseneck_
+
+====
+[source, sql]
+include::banco/SucursalesConActivoSuperiorQueLasDeHorseneck.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/SucursalesConActivoSuperiorQueLasDeHorseneck.csv[]
+|===================================================
+
+.Listado en orden alfabético de nombres de todos los empleados y de todos los clientes
+====
+[source, sql]
+include::banco/NombresEmpleadosClientes.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/NombresEmpleadosClientes.csv[]
+|===================================================
+
+.Listado en orden alfabético de nombres de todos los empleados que coincidan con nombres de clientes
+====
+[source, sql]
+include::banco/NombresEmpleadosIgualQueClientes.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/NombresEmpleadosIgualQueClientes.csv[]
+|===================================================
+
+.Listado en orden alfabético de nombres de todos los empleados que tengan un nombre que no coincida con el nombre de algún clientes
+====
+[source, sql]
+include::banco/NombresEmpleadosDistintosDeClientes.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/NombresEmpleadosDistintosDeClientes.csv[]
+|===================================================
+
+=== Subconsultas
+
+.Nombres de empleado que trabajen en sucursales que tengan un activo superior a 500000
+
+====
+[source, sql]
+include::banco/EmpleadosEnSucursalesActivoMayorQue.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/EmpleadosEnSucursalesActivoMayorQue.csv[]
+|===================================================
+
+.Rescribir la consulta anterior usando una subconsulta en la cláusula FROM
+
+====
+[source, sql]
+include::banco/SubconsultaFROM.sql[]
+====
+
+.Nombres de sucursal en los que no haya trabajando ningún empleado
+
+====
+[source, sql]
+include::banco/SucursalesSinEmpleados.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/SucursalesSinEmpleados.csv[]
+|===================================================
+
+.Rescribir la consulta anterior usando el operador `NOT IN`
+
+====
+[source, sql]
+include::banco/SucursalesSinEmpleadosNOTIN.sql[]
+====
+
+.Rescribir la consulta anterior usando `LEFT JOIN`
+
+====
+[source, sql]
+include::banco/SucursalesSinEmpleadosLEFTJOIN.sql[]
+====
+

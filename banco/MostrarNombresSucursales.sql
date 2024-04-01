@@ -1,0 +1,2 @@
+SELECT	nombreSuc
+FROM	Sucursales;
