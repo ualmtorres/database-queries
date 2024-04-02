@@ -367,17 +367,142 @@ include::banco/SucursalesSinEmpleados.sql[]
 include::banco/SucursalesSinEmpleados.csv[]
 |===================================================
 
-.Rescribir la consulta anterior usando el operador `NOT IN`
+.Reescribir la consulta anterior usando el operador `NOT IN`
 
 ====
 [source, sql]
 include::banco/SucursalesSinEmpleadosNOTIN.sql[]
 ====
 
-.Rescribir la consulta anterior usando `LEFT JOIN`
+.Reescribir la consulta anterior usando `LEFT JOIN`
 
 ====
 [source, sql]
 include::banco/SucursalesSinEmpleadosLEFTJOIN.sql[]
 ====
+
+.Sucursales que tengan un activo superior al máximo de los activos de las sucursales de la ciudad de Horseneck
+
+====
+[source, sql]
+include::banco/SucursalesConMasActivoQueTodasLasDeHorseneck.sql[]
+====
+
+.Sucursales que tengan un activo superior a cualquiera de los activos de las sucursales de la ciudad de Horseneck
+
+====
+[source, sql]
+include::banco/SucursalesConMasActivoQueCualquieraDeLasDeHorseneck.sql[]
+====
+
+=== Agrupación
+
+.Activo medio de las sucursales
+
+====
+[source, sql]
+include::banco/ActivoMedioSucursales.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/ActivoMedioSucursales.csv[]
+|===================================================
+
+.Cantidad total de sucursales
+
+====
+[source, sql]
+include::banco/CantidadTotalSucursales.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/CantidadTotalSucursales.csv[]
+|===================================================
+
+[NOTE]
+====
+La consulta anterior también podría haber usado `COUNT(ciudadSuc)` en lugar de `COUNT(*)`, ya que `ciudadSuc` no es nulo en ninguna fila.
+====
+
+.Cantidad de ciudades en las que hay sucursales
+
+====
+[source, sql]
+include::banco/CantidadTotalCiudadesSucursales.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/CantidadTotalCiudadesSucursales.csv[]
+|===================================================
+
+.Agrupación
+****
+Para entender cómo funciona la agrupación, vamos a mostrar todas las sucursales ordenadas por ciudad. Los grupos permitirán considerar las sucursales de la misma ciudad como un único grupo. La agrupación se realiza con la cláusula `GROUP BY`. Posteriormente, a cada grupo se le aplicará una de las posibles funciones de agregación, como `COUNT`, `SUM`, `AVG`, `MIN` y `MAX`.
+
+[format="csv",options="header"]
+|===================================================
+include::banco/SucursalesOrdenadasPorCiudad.csv[]
+|===================================================
+
+[IMPORTANT]
+====
+Si se usa una función de agregación, todas las columnas en la lista `SELECT` deben ser columnas agrupadas o ser argumentos de una función de agregación.
+====
+****
+
+.Activo medio por ciudad
+
+====
+[source, sql]
+include::banco/ActivoMedioPorCiudad.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/ActivoMedioPorCiudad.csv[]
+|===================================================
+
+.Total de saldo de las cuentas de cada cliente. Mostrar el nombre del cliente y el total de saldo de sus cuentas ordenado por total de saldo de forma descendente
+
+====
+[source, sql]
+include::banco/TotalSaldoCliente.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/TotalSaldoCliente.csv[]
+|===================================================
+
+.Clientes que tengan un saldo total superior a 55000 EUR. Mostrar el nombre del cliente y el total de saldo de sus cuentas ordenado por total de saldo de forma descendente
+
+====
+[source, sql]
+include::banco/ClientesConSaldoTotalMayorQue.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/ClientesConSaldoTotalMayorQue.csv[]
+|===================================================
+
+.Ciudades en las que están las sucursales que tienen más de una cuenta
+
+====
+[source, sql]
+include::banco/CiudadesConSucursalesConMasDeUnaCuenta.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/CiudadesConSucursalesConMasDeUnaCuenta.csv[]
+|===================================================
+
+=== Vistas
+
+=== Operaciones de modificación
+
 

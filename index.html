@@ -453,6 +453,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_consultas_básicas">1.3. Consultas básicas</a></li>
 <li><a href="#_combinación_de_tablas">1.4. Combinación de tablas</a></li>
 <li><a href="#_subconsultas">1.5. Subconsultas</a></li>
+<li><a href="#_agrupación">1.6. Agrupación</a></li>
+<li><a href="#_vistas">1.7. Vistas</a></li>
+<li><a href="#_operaciones_de_modificación">1.8. Operaciones de modificación</a></li>
 </ul>
 </li>
 </ul>
@@ -2623,7 +2626,7 @@ WHERE	NOT EXISTS (
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 27. Rescribir la consulta anterior usando el operador <code>NOT IN</code></div>
+<div class="title">Example 27. Reescribir la consulta anterior usando el operador <code>NOT IN</code></div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2638,7 +2641,7 @@ WHERE	nombreSuc NOT IN (
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 28. Rescribir la consulta anterior usando <code>LEFT JOIN</code></div>
+<div class="title">Example 28. Reescribir la consulta anterior usando <code>LEFT JOIN</code></div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2650,13 +2653,420 @@ WHERE	dniemp ISNULL</code></pre>
 </div>
 </div>
 </div>
+<div class="exampleblock">
+<div class="title">Example 29. Sucursales que tengan un activo superior al máximo de los activos de las sucursales de la ciudad de Horseneck</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	nombreSuc
+FROM 	Sucursales
+WHERE 	activo &gt; ALL (
+  			SELECT	activo
+			FROM	Sucursales
+			WHERE	ciudadsuc = "Horseneck"
+		)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 30. Sucursales que tengan un activo superior a cualquiera de los activos de las sucursales de la ciudad de Horseneck</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	nombreSuc
+FROM 	Sucursales
+WHERE 	activo &gt; ANY (
+  			SELECT	activo
+			FROM	Sucursales
+			WHERE	ciudadsuc = "Horseneck"
+		)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_agrupación">1.6. Agrupación</h3>
+<div class="exampleblock">
+<div class="title">Example 31. Activo medio de las sucursales</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	AVG (activo) as activoMedio
+FROM	Sucursales;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 100%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">activoMedio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3688888.888888889</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 32. Cantidad total de sucursales</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	COUNT(*) as numeroSucursales
+FROM	Sucursales;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 100%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">numeroSucursales</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>La consulta anterior también podría haber usado <code>COUNT(ciudadSuc)</code> en lugar de <code>COUNT(*)</code>, ya que <code>ciudadSuc</code> no es nulo en ninguna fila.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock">
+<div class="title">Example 33. Cantidad de ciudades en las que hay sucursales</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	COUNT (DISTINCT ciudadSuc) as numeroSucursales
+FROM	Sucursales;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 100%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">numeroSucursales</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Agrupación</div>
+<div class="paragraph">
+<p>Para entender cómo funciona la agrupación, vamos a mostrar todas las sucursales ordenadas por ciudad. Los grupos permitirán considerar las sucursales de la misma ciudad como un único grupo. La agrupación se realiza con la cláusula <code>GROUP BY</code>. Posteriormente, a cada grupo se le aplicará una de las posibles funciones de agregación, como <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code> y <code>MAX</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ciudadSuc</th>
+<th class="tableblock halign-left valign-top">nombreSuc</th>
+<th class="tableblock halign-left valign-top">activo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">null</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Almeria</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">900000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bennington</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pownal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">300000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brooklyn</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9000000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brooklyn</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brighton</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7100000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Horseneck</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Perrydge</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1700000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Horseneck</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mianus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">400000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Horseneck</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Round Hill</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8000000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Palo Alto</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redwood</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2100000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rye</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">North Town</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3700000</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Si se usa una función de agregación, todas las columnas en la lista <code>SELECT</code> deben ser columnas agrupadas o ser argumentos de una función de agregación.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 34. Activo medio por ciudad</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">ELECT	ciudadSuc, AVG(activo)
+FROM	Sucursales
+GROUP BY ciudadSuc;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ciudadSuc</th>
+<th class="tableblock halign-left valign-top">AVG(activo)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">null</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">900000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bennington</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">300000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brooklyn</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8050000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Horseneck</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3366666.6666666665</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Palo Alto</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2100000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rye</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3700000</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 35. Total de saldo de las cuentas de cada cliente. Mostrar el nombre del cliente y el total de saldo de sus cuentas ordenado por total de saldo de forma descendente</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	nombrecli, saldoTotal
+FROM	Clientes Cli, 
+		(
+          SELECT	CC.dniCli, SUM(saldo) as saldoTotal
+          FROM		CtaCli CC 
+          			JOIN Cuentas Cu ON CC.numeroCta = Cu.numeroCta
+          GROUP BY	dniCli
+        ) Aux
+WHERE	Cli.dniCli = Aux.dniCli
+ORDER BY saldoTotal DESC</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">nombreCli</th>
+<th class="tableblock halign-left valign-top">saldoTotal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Johnson</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">90000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Green</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Turner</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Williams</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lindsay</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hayes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">40000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Smith</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30000</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 36. Clientes que tengan un saldo total superior a 55000 EUR. Mostrar el nombre del cliente y el total de saldo de sus cuentas ordenado por total de saldo de forma descendente</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	nombrecli, saldoTotal
+FROM	Clientes Cli, 
+		(
+          SELECT	CC.dniCli, SUM(saldo) as saldoTotal
+          FROM		CtaCli CC 
+          			JOIN Cuentas Cu ON CC.numeroCta = Cu.numeroCta
+          GROUP BY	dniCli
+          HAVING	Sum(Saldo) &gt; 55000
+        ) Aux
+WHERE	Cli.dniCli = Aux.dniCli
+ORDER BY saldoTotal DESC</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">nombreCli</th>
+<th class="tableblock halign-left valign-top">saldoTotal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Johnson</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">90000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Green</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60000</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 37. Ciudades en las que están las sucursales que tienen más de una cuenta</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	ciudadSuc
+FROM	Sucursales
+WHERE	nombreSuc IN 
+	(
+      SELECT	nombreSuc
+      FROM		Cuentas
+      GROUP BY	nombreSuc
+      HAVING	COUNT(numeroCta) &gt; 1
+    );</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 100%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ciudadSuc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brooklyn</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Horseneck</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_vistas">1.7. Vistas</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_operaciones_de_modificación">1.8. Operaciones de modificación</h3>
+
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-01 22:02:22 +0200
+Last updated 2024-04-02 07:17:46 +0200
 </div>
 </div>
 </body>
