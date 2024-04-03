@@ -56,6 +56,14 @@ include::banco/CtaCli.csv[]
 include::banco/Transacciones.csv[]
 |===================================================
 
+=== Creación de tablas
+
+.Crear las tablas del esquema del banco
+====
+[source, sql]
+include::banco/banco-schema.sql[]
+====
+
 === Consultas básicas
 
 .Mostrar todas las sucursales
@@ -503,6 +511,188 @@ include::banco/CiudadesConSucursalesConMasDeUnaCuenta.csv[]
 
 === Vistas
 
+.Crear una vista `EmpleCiudad` que muestre el nombre de los empleados, teléfono, sucursal en la que trabajan y ciudad de la sucursal
+
+====
+[source, sql]
+include::banco/VistaEmpleadosTelefonoSucursalCiudad.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/VistaEmpleadosTelefonoSucursalCiudad.csv[]
+|===================================================
+
+.Crear una vista `ClientesSaldoTotal` que muestre el DNI, nombre y saldo total de las cuentas de los clientes
+
+====
+[source, sql]
+include::banco/ClientesSaldoTotal.sql[]
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/ClientesSaldoTotal.csv[]
+|===================================================
+
 === Operaciones de modificación
 
+.Insertar un nuevo empleado con nombre `Harry`, DNI `16`, teléfono `161616` y sucursal `Brighton`
+
+====
+[source, sql]
+include::banco/InsertarEmpleadoHarry.sql[]
+====
+
+.Insertar un nuevo empleado incompleto con nombre `Mukos`, DNI `17` y sucursal `Brighton`
+
+====
+[source, sql]
+include::banco/InsertarEmpleadoMukos.sql[]
+====
+
+.Actualizar el teléfono del empleado con DNI `17` a `171717`
+
+[source, sql]
+====
+----
+include::banco/ActualizarEmpleadoMukos.sql[]
+----
+====
+
+Tras las inserciones y actualizaciones, la tabla de empleados quedaría así:
+
+[format="csv",options="header"]
+|===================================================
+include::banco/EmpleadosModificados.csv[]
+|===================================================
+
+.Borrar los empleados introducidos (con DNI `16` y `17`)
+====
+[source, sql]
+----
+include::banco/EliminarEmpleadosIntroducidos.sql[]
+----
+====
+
+Tras la eliminación, la tabla de empleados volverá a quedar como estaba al principio:
+
+[format="csv",options="header"]
+|===================================================
+include::banco/Empleados.csv[]
+|===================================================
+
+=== Consultas variadas
+
+.Mostrar los clientes que tienen cuentas en la sucursal Downtown
+====
+[source, sql]
+----
+include::banco/ClientesConCuentaEnDowntown.sql[]
+----
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/ClientesConCuentaEnDowntown.csv[]
+|===================================================
+
+
+.Mostrar todas las trasaccione realizadas por el cliente con DNI 1 indicando el número de cuenta, la sucursal de la cuenta y los datos de las transacciones
+====
+[source, sql]
+----
+include::banco/TransaccionesDeUnCliente.sql[]
+----
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/TransaccionesDeUnCliente.csv[]
+|===================================================
+
+.Mostrar la suma de saldos de las cuentas de la ciudad de Brooklyn
+====
+[source, sql]
+----
+include::banco/SumaSaldosSucursalesDeBrooklyn.sql[]
+----
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/SumaSaldosSucursalesDeBrooklyn.csv[]
+|===================================================
+
+.Mostrar la suma de saldos de las cuentas con saldo mayor que 20000 agrupadas por ciudad. Mostrar sólo las ciudades con una suma de saldos superior a 100000
+====
+[source, sql]
+----
+include::banco/SumaSaldosCiudadesFiltrado.sql[]
+----
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/SumaSaldosCiudadesFiltrado.csv[]
+|===================================================
+
+.Mostrar nombre de cliente, número de cuenta y saldo de las cuentas con saldo mayor que la media de los saldos de todas las cuentas
+====
+[source, sql]
+----
+include::banco/ClientesConSaldoMayorQueLaMedia.sql[]
+----
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/ClientesConSaldoMayorQueLaMedia.csv[]
+|===================================================
+
+.Mostrar las cuentas compartidas junto con los nombres de los clientes que las comparten (una cuenta compartida es aquella que tiene más de un titular)
+====
+[source, sql]
+----
+include::banco/ClientesConCuentasCompartidas.sql[]
+----
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/ClientesConCuentasCompartidas.csv[]
+|===================================================
+
+.Mostrar todas las sucursales, aunque no tengan cuentas, con el número de cuentas que tienen y el saldo total de las cuentas. Las sucursales sin cuentas tendrán 0 en el número de cuentas y en el saldo total 
+
+
+====
+[source, sql]
+----
+include::banco/SaldoTotalDeTodasLasSucursales.sql[]
+----
+====
+
+[TIP]
+====
+La función `COALESCE` permite mostrar en una columna un valor por defecto en lugar de `NULL`. Su sintaxis es `COALESCE(expresión, valorPorDefecto)`. Por ejemplo, `COALESCE(calificacion, 'no presentado')` mostrará `no presentado` en lugar de `NULL` si `calificacion` es `NULL`. En caso contrario, mostrará el valor que tenga `calificacion`.
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/SaldoTotalDeTodasLasSucursales.csv[]
+|===================================================
+
+.Mostrar la cuenta con el saldo más alto. Mostrar el número de cuenta, el saldo y los nombres de los clientes titulares.
+====
+[source, sql]
+----
+include::banco/CuentaConMayorSaldo.sql[]
+----
+====
+
+[format="csv",options="header"]
+|===================================================
+include::banco/CuentaConMayorSaldo.csv[]
+|===================================================
 

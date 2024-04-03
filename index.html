@@ -450,12 +450,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_modelo_de_datos">1.1. Modelo de datos</a></li>
 <li><a href="#_datos_de_ejemplo">1.2. Datos de ejemplo</a></li>
-<li><a href="#_consultas_básicas">1.3. Consultas básicas</a></li>
-<li><a href="#_combinación_de_tablas">1.4. Combinación de tablas</a></li>
-<li><a href="#_subconsultas">1.5. Subconsultas</a></li>
-<li><a href="#_agrupación">1.6. Agrupación</a></li>
-<li><a href="#_vistas">1.7. Vistas</a></li>
-<li><a href="#_operaciones_de_modificación">1.8. Operaciones de modificación</a></li>
+<li><a href="#_creación_de_tablas">1.3. Creación de tablas</a></li>
+<li><a href="#_consultas_básicas">1.4. Consultas básicas</a></li>
+<li><a href="#_combinación_de_tablas">1.5. Combinación de tablas</a></li>
+<li><a href="#_subconsultas">1.6. Subconsultas</a></li>
+<li><a href="#_agrupación">1.7. Agrupación</a></li>
+<li><a href="#_vistas">1.8. Vistas</a></li>
+<li><a href="#_operaciones_de_modificación">1.9. Operaciones de modificación</a></li>
+<li><a href="#_consultas_variadas">1.10. Consultas variadas</a></li>
 </ul>
 </li>
 </ul>
@@ -817,9 +819,62 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect2">
-<h3 id="_consultas_básicas">1.3. Consultas básicas</h3>
+<h3 id="_creación_de_tablas">1.3. Creación de tablas</h3>
 <div class="exampleblock">
-<div class="title">Example 1. Mostrar todas las sucursales</div>
+<div class="title">Example 1. Crear las tablas del esquema del banco</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">CREATE TABLE Clientes (
+    nombreCli varchar(50), 
+    dniCli varchar(10) NOT NULL, 
+    domicilio varchar(50),
+    PRIMARY KEY (dniCli)
+);
+CREATE TABLE Cuentas (
+    numeroCta varchar(5) NOT NULL, 
+    saldo float, 
+    nombreSuc varchar(50),
+    PRIMARY KEY (numeroCta),
+    FOREIGN KEY (nombreSuc) REFERENCES Sucursales(nombreSuc)
+);
+CREATE TABLE CtaCli (
+    dniCli varchar(10) NOT NULL, 
+    numeroCta varchar(5) NOT NULL, 
+    PRIMARY KEY (dniCli, numeroCta),
+    FOREIGN KEY (dniCli) REFERENCES Clientes(dniCli)
+);
+CREATE TABLE Empleados (
+    nombreEmp varchar(50), 
+    dniEmp varchar(10) NOT NULL, 
+    telefono varchar(10), 
+    nombreSuc varchar(50), 
+    PRIMARY KEY (dniEmp),
+    FOREIGN KEY (nombreSuc) REFERENCES Sucursales(nombreSuc)
+);
+CREATE TABLE Sucursales (
+    nombreSuc varchar(50) NOT NULL, 
+    ciudadSuc varchar(50), 
+    activo FLOAT
+    PRIMARY KEY (nombreSuc)
+);
+CREATE TABLE Transacciones (
+    numeroCta varchar(5) NOT NULL, 
+    numeroTrans varchar(5) NOT NULL, 
+    fecha date, 
+    importe float, 
+    PRIMARY KEY (numeroCta, numeroTrans), 
+    FOREIGN KEY (numeroCta) REFERENCES Cuentas(numeroCta)
+);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_consultas_básicas">1.4. Consultas básicas</h3>
+<div class="exampleblock">
+<div class="title">Example 2. Mostrar todas las sucursales</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -891,7 +946,7 @@ FROM	Sucursales;</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 2. Mostrar las sucursales de la ciudad <em>Horseneck</em></div>
+<div class="title">Example 3. Mostrar las sucursales de la ciudad <em>Horseneck</em></div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -934,7 +989,7 @@ WHERE	ciudadSuc = "Horseneck"</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 3. Mostrar todos los nombres de las sucursales</div>
+<div class="title">Example 4. Mostrar todos los nombres de las sucursales</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -984,7 +1039,7 @@ FROM	Sucursales;</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 4. Mostrar todas las sucursales diferentes en las que haya empleados trabajando</div>
+<div class="title">Example 5. Mostrar todas las sucursales diferentes en las que haya empleados trabajando</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1019,7 +1074,7 @@ FROM	Empleados</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 5. Mostrar los datos de las cuentas con las columnas actuales y una nueva columna denominada <em>saldoEnDolares</em> que sea el saldo de la cuenta en dólares</div>
+<div class="title">Example 6. Mostrar los datos de las cuentas con las columnas actuales y una nueva columna denominada <em>saldoEnDolares</em> que sea el saldo de la cuenta en dólares</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1084,7 +1139,7 @@ FROM 	Cuentas</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 6. Mostrar los nombres de la sucursales y sus activos de las sucursales de la ciudad <em>Horseneck</em> y con un activo superior a 1000000</div>
+<div class="title">Example 7. Mostrar los nombres de la sucursales y sus activos de las sucursales de la ciudad <em>Horseneck</em> y con un activo superior a 1000000</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1119,7 +1174,7 @@ WHERE	ciudadSuc = "Horseneck"
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 7. Mostrar las filas de las sucursales que estén en la ciudad de Horseneck o Brooklyn</div>
+<div class="title">Example 8. Mostrar las filas de las sucursales que estén en la ciudad de Horseneck o Brooklyn</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1173,7 +1228,7 @@ WHERE	ciudadsuc = "Horseneck"
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 8. Usar el operador IN para mostrar las filas de las sucursales que estén en las ciudades de Horseneck, Brooklyn o Rye</div>
+<div class="title">Example 9. Usar el operador IN para mostrar las filas de las sucursales que estén en las ciudades de Horseneck, Brooklyn o Rye</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1231,7 +1286,7 @@ WHERE	ciudadsuc IN ("Horseneck", "Brooklyn", "Rye")</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 9. Devolver las filas que no estén en la ciudad de Horseneck o Brooklyn</div>
+<div class="title">Example 10. Devolver las filas que no estén en la ciudad de Horseneck o Brooklyn</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1274,7 +1329,7 @@ WHERE	ciudadsuc NOT IN ("Horseneck", "Brooklyn")</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 10. Devolver las filas de las sucursales ordenadas por nombre de sucursal</div>
+<div class="title">Example 11. Devolver las filas de las sucursales ordenadas por nombre de sucursal</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1347,7 +1402,7 @@ ORDER BY nombresuc</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 11. Devolver las filas de las sucursales de la ciudad de Brooklyn y Horseneck ordenadas por ciudad y activo, ordenando el activo de forma descendente</div>
+<div class="title">Example 12. Devolver las filas de las sucursales de la ciudad de Brooklyn y Horseneck ordenadas por ciudad y activo, ordenando el activo de forma descendente</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1401,7 +1456,7 @@ ORDER BY ciudadSuc, activo DESC</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 12. Devolver las filas de clientes que vivan en cualquier número de la calle <em>Paseo de la Alameda</em></div>
+<div class="title">Example 13. Devolver las filas de clientes que vivan en cualquier número de la calle <em>Paseo de la Alameda</em></div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1439,7 +1494,7 @@ WHERE	domicilio LIKE "Paseo de la Alameda%"</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 13. Devolver las filas de clientes que vivan en cualquier calle <em>Alameda</em></div>
+<div class="title">Example 14. Devolver las filas de clientes que vivan en cualquier calle <em>Alameda</em></div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1482,7 +1537,7 @@ WHERE	domicilio LIKE "%Alameda%"</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 14. Devolver las filas de clientes que vivan en el número <em>1</em> de cualquier calle</div>
+<div class="title">Example 15. Devolver las filas de clientes que vivan en el número <em>1</em> de cualquier calle</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1516,9 +1571,9 @@ WHERE	domicilio LIKE "%nº 1"</code></pre>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_combinación_de_tablas">1.4. Combinación de tablas</h3>
+<h3 id="_combinación_de_tablas">1.5. Combinación de tablas</h3>
 <div class="exampleblock">
-<div class="title">Example 15. Realizar el produto cartesianos de las tablas <em>Sucursales</em> y <em>Empleados</em> para entender cómo se combinan las filas de las tablas</div>
+<div class="title">Example 16. Realizar el produto cartesianos de las tablas <em>Sucursales</em> y <em>Empleados</em> para entender cómo se combinan las filas de las tablas</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2059,7 +2114,7 @@ FROM 	Sucursales
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 16. Mostrar los nombres de los empleados que trabajan en la sucursal de la ciudad de <em>Horseneck</em>. Mostrar la sucursal y el nombre del empleado ordenados por sucursal y nombre de empleado</div>
+<div class="title">Example 17. Mostrar los nombres de los empleados que trabajan en la sucursal de la ciudad de <em>Horseneck</em>. Mostrar la sucursal y el nombre del empleado ordenados por sucursal y nombre de empleado</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2100,7 +2155,7 @@ ORDER BY Empleados.nombresuc, nombreEmp</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 17. Reescritura de la consulta anterior usando JOIN</div>
+<div class="title">Example 18. Reescritura de la consulta anterior usando JOIN</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2161,7 +2216,7 @@ ORDER BY Empleados.nombresuc, nombreEmp</code></pre>
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 18. Combinar todas las sucursales con todos sus empleados. Completar con NULL aquellas sucursales que no contengan empleados.</div>
+<div class="title">Example 19. Combinar todas las sucursales con todos sus empleados. Completar con NULL aquellas sucursales que no contengan empleados.</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2296,7 +2351,7 @@ FROM 	Sucursales
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 19. Nombres de empleados que trabajan en la misma sucursal que <em>Smith</em></div>
+<div class="title">Example 20. Nombres de empleados que trabajan en la misma sucursal que <em>Smith</em></div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2327,7 +2382,7 @@ WHERE	Ebis.nombreEmp = "Smith"
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 20. Nombres de sucursales y activos de las sucursales que tengan un activo superior a las sucursales de la ciudad de <em>Horseneck</em></div>
+<div class="title">Example 21. Nombres de sucursales y activos de las sucursales que tengan un activo superior a las sucursales de la ciudad de <em>Horseneck</em></div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2383,7 +2438,7 @@ WHERE   S1.ciudadSuc = "Horseneck"
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 21. Listado en orden alfabético de nombres de todos los empleados y de todos los clientes</div>
+<div class="title">Example 22. Listado en orden alfabético de nombres de todos los empleados y de todos los clientes</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2446,7 +2501,7 @@ ORDER BY nombreEmp;</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 22. Listado en orden alfabético de nombres de todos los empleados que coincidan con nombres de clientes</div>
+<div class="title">Example 23. Listado en orden alfabético de nombres de todos los empleados que coincidan con nombres de clientes</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2476,7 +2531,7 @@ ORDER BY nombreEmp;</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 23. Listado en orden alfabético de nombres de todos los empleados que tengan un nombre que no coincida con el nombre de algún clientes</div>
+<div class="title">Example 24. Listado en orden alfabético de nombres de todos los empleados que tengan un nombre que no coincida con el nombre de algún clientes</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2519,9 +2574,9 @@ ORDER BY nombreEmp;</code></pre>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_subconsultas">1.5. Subconsultas</h3>
+<h3 id="_subconsultas">1.6. Subconsultas</h3>
 <div class="exampleblock">
-<div class="title">Example 24. Nombres de empleado que trabajen en sucursales que tengan un activo superior a 500000</div>
+<div class="title">Example 25. Nombres de empleado que trabajen en sucursales que tengan un activo superior a 500000</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2565,7 +2620,7 @@ ORDER BY nombreemp;</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 25. Rescribir la consulta anterior usando una subconsulta en la cláusula FROM</div>
+<div class="title">Example 26. Rescribir la consulta anterior usando una subconsulta en la cláusula FROM</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2583,7 +2638,7 @@ WHERE   E.nombreSuc = Suc5M.nombreSuc;</code></pre>
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 26. Nombres de sucursal en los que no haya trabajando ningún empleado</div>
+<div class="title">Example 27. Nombres de sucursal en los que no haya trabajando ningún empleado</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2626,7 +2681,7 @@ WHERE	NOT EXISTS (
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 27. Reescribir la consulta anterior usando el operador <code>NOT IN</code></div>
+<div class="title">Example 28. Reescribir la consulta anterior usando el operador <code>NOT IN</code></div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2641,7 +2696,7 @@ WHERE	nombreSuc NOT IN (
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 28. Reescribir la consulta anterior usando <code>LEFT JOIN</code></div>
+<div class="title">Example 29. Reescribir la consulta anterior usando <code>LEFT JOIN</code></div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2654,7 +2709,7 @@ WHERE	dniemp ISNULL</code></pre>
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 29. Sucursales que tengan un activo superior al máximo de los activos de las sucursales de la ciudad de Horseneck</div>
+<div class="title">Example 30. Sucursales que tengan un activo superior al máximo de los activos de las sucursales de la ciudad de Horseneck</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2670,7 +2725,7 @@ WHERE 	activo &gt; ALL (
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 30. Sucursales que tengan un activo superior a cualquiera de los activos de las sucursales de la ciudad de Horseneck</div>
+<div class="title">Example 31. Sucursales que tengan un activo superior a cualquiera de los activos de las sucursales de la ciudad de Horseneck</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2687,9 +2742,9 @@ WHERE 	activo &gt; ANY (
 </div>
 </div>
 <div class="sect2">
-<h3 id="_agrupación">1.6. Agrupación</h3>
+<h3 id="_agrupación">1.7. Agrupación</h3>
 <div class="exampleblock">
-<div class="title">Example 31. Activo medio de las sucursales</div>
+<div class="title">Example 32. Activo medio de las sucursales</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2715,7 +2770,7 @@ FROM	Sucursales;</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 32. Cantidad total de sucursales</div>
+<div class="title">Example 33. Cantidad total de sucursales</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2755,7 +2810,7 @@ FROM	Sucursales;</code></pre>
 </table>
 </div>
 <div class="exampleblock">
-<div class="title">Example 33. Cantidad de ciudades en las que hay sucursales</div>
+<div class="title">Example 34. Cantidad de ciudades en las que hay sucursales</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2864,11 +2919,11 @@ FROM	Sucursales;</code></pre>
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 34. Activo medio por ciudad</div>
+<div class="title">Example 35. Activo medio por ciudad</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-sql" data-lang="sql">ELECT	ciudadSuc, AVG(activo)
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	ciudadSuc, AVG(activo)
 FROM	Sucursales
 GROUP BY ciudadSuc;</code></pre>
 </div>
@@ -2914,7 +2969,7 @@ GROUP BY ciudadSuc;</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 35. Total de saldo de las cuentas de cada cliente. Mostrar el nombre del cliente y el total de saldo de sus cuentas ordenado por total de saldo de forma descendente</div>
+<div class="title">Example 36. Total de saldo de las cuentas de cada cliente. Mostrar el nombre del cliente y el total de saldo de sus cuentas ordenado por total de saldo de forma descendente</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2975,7 +3030,7 @@ ORDER BY saldoTotal DESC</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 36. Clientes que tengan un saldo total superior a 55000 EUR. Mostrar el nombre del cliente y el total de saldo de sus cuentas ordenado por total de saldo de forma descendente</div>
+<div class="title">Example 37. Clientes que tengan un saldo total superior a 55000 EUR. Mostrar el nombre del cliente y el total de saldo de sus cuentas ordenado por total de saldo de forma descendente</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -3017,7 +3072,7 @@ ORDER BY saldoTotal DESC</code></pre>
 </tbody>
 </table>
 <div class="exampleblock">
-<div class="title">Example 37. Ciudades en las que están las sucursales que tienen más de una cuenta</div>
+<div class="title">Example 38. Ciudades en las que están las sucursales que tienen más de una cuenta</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -3054,19 +3109,763 @@ WHERE	nombreSuc IN
 </table>
 </div>
 <div class="sect2">
-<h3 id="_vistas">1.7. Vistas</h3>
-
+<h3 id="_vistas">1.8. Vistas</h3>
+<div class="exampleblock">
+<div class="title">Example 39. Crear una vista <code>EmpleCiudad</code> que muestre el nombre de los empleados, teléfono, sucursal en la que trabajan y ciudad de la sucursal</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">CREATE VIEW EmpleCiudad AS
+SELECT      nombreEmp, 
+            telefono, 
+            Empleados.nombreSuc, 
+            ciudadSuc
+FROM        Empleados, 
+            Sucursales
+WHERE       Empleados.nombreSuc = Sucursales.nombreSuc</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">nombreEmp</th>
+<th class="tableblock halign-left valign-top">telefono</th>
+<th class="tableblock halign-left valign-top">nombreSuc</th>
+<th class="tableblock halign-left valign-top">ciudadSuc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Smith</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">101010</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brooklyn</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kortz</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">111111</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brooklyn</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hansen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">121212</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Perrydge</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Horseneck</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dubitzky</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">131313</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Perrydge</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Horseneck</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Henson</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">141414</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mianus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Horseneck</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kravitz</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">151515</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brighton</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brooklyn</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 40. Crear una vista <code>ClientesSaldoTotal</code> que muestre el DNI, nombre y saldo total de las cuentas de los clientes</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">CREATE VIEW ClientesSaldoTotal (DNICli, nombreCli, SaldoTotal) AS 
+SELECT	Clientes.DNICli,
+		nombreCli,
+		SUM(Saldo)
+FROM	Clientes, 
+		CtaCli, 
+        Cuentas
+WHERE	Clientes.DNICli = CtaCli.DNICli 
+		and CtaCli.numeroCta = Cuentas.numeroCta
+GROUP BY Clientes.DNICli;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">DNICli</th>
+<th class="tableblock halign-left valign-top">nombreCli</th>
+<th class="tableblock halign-left valign-top">SaldoTotal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Johnson</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">90000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Smith</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hayes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">40000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Turner</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Williams</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lindsay</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Green</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60000</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
-<h3 id="_operaciones_de_modificación">1.8. Operaciones de modificación</h3>
-
+<h3 id="_operaciones_de_modificación">1.9. Operaciones de modificación</h3>
+<div class="exampleblock">
+<div class="title">Example 41. Insertar un nuevo empleado con nombre <code>Harry</code>, DNI <code>16</code>, teléfono <code>161616</code> y sucursal <code>Brighton</code></div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">INSERT INTO Empleados 
+VALUES ("Harry", "16", "161616", "Brighton"); </code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 42. Insertar un nuevo empleado incompleto con nombre <code>Mukos</code>, DNI <code>17</code> y sucursal <code>Brighton</code></div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">INSERT INTO Empleados(nombreEmp, dniEmp, nombreSuc) 
+VALUES ("Mukos", "17", "Brighton"); </code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 43. Actualizar el teléfono del empleado con DNI <code>17</code> a <code>171717</code></div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>UPDATE	Empleados
+SET		telefono = "171717"
+WHERE	dniemp = "17";</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Tras las inserciones y actualizaciones, la tabla de empleados quedaría así:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">nombreEmp</th>
+<th class="tableblock halign-left valign-top">dniEmp</th>
+<th class="tableblock halign-left valign-top">telefono</th>
+<th class="tableblock halign-left valign-top">nombreSuc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Smith</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">101010</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kortz</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">111111</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hansen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">12</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">121212</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Perrydge</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dubitzky</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">131313</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Perrydge</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Henson</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">141414</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mianus</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kravitz</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">151515</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brighton</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Harry</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">16</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">161616</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brighton</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mukos</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">17</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">171717</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brighton</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 44. Borrar los empleados introducidos (con DNI <code>16</code> y <code>17</code>)</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">DELETE
+FROM	Empleados
+WHERE	dniemp IN ('16', '17')</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Tras la eliminación, la tabla de empleados volverá a quedar como estaba al principio:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">nombreEmp</th>
+<th class="tableblock halign-left valign-top">dniEmp</th>
+<th class="tableblock halign-left valign-top">telefono</th>
+<th class="tableblock halign-left valign-top">nombreSuc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Smith</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">101010</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kortz</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">111111</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hansen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">12</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">121212</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Perrydge</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dubitzky</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">131313</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Perrydge</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Henson</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">141414</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mianus</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kravitz</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">151515</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brighton</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_consultas_variadas">1.10. Consultas variadas</h3>
+<div class="exampleblock">
+<div class="title">Example 45. Mostrar los clientes que tienen cuentas en la sucursal Downtown</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT  c.nombreCli, 
+        cc.numeroCta, 
+        cu.nombreSuc
+FROM    Clientes c
+        INNER JOIN CtaCli cc ON c.dniCli = cc.dniCli
+        INNER JOIN Cuentas cu ON cc.numeroCta = cu.numeroCta
+WHERE   cu.nombreSuc = 'Downtown';</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">nombreCli</th>
+<th class="tableblock halign-left valign-top">numeroCta</th>
+<th class="tableblock halign-left valign-top">nombreSuc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Johnson</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Johnson</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 46. Mostrar todas las trasaccione realizadas por el cliente con DNI 1 indicando el número de cuenta, la sucursal de la cuenta y los datos de las transacciones</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	t.numeroCta, 
+		cu.nombreSuc, 	
+       	t.numeroTrans, 
+        t.fecha, 
+        t.importe
+FROM	Transacciones t
+		INNER JOIN Cuentas cu ON t.numeroCta = cu.numeroCta
+		INNER JOIN CtaCli cc ON cu.numeroCta = cc.numeroCta
+		INNER JOIN Clientes c ON cc.dniCli = c.dniCli
+WHERE	c.dniCli = '1';</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">numeroCta</th>
+<th class="tableblock halign-left valign-top">nombreSuc</th>
+<th class="tableblock halign-left valign-top">numeroTrans</th>
+<th class="tableblock halign-left valign-top">fecha</th>
+<th class="tableblock halign-left valign-top">importe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10/10/2012</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10/10/2012</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11/10/2012</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-20000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brighton</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13/10/2012</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60000</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 47. Mostrar la suma de saldos de las cuentas de la ciudad de Brooklyn</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	Cuentas.nombreSuc, SUM(saldo) AS SaldoTotal
+FROM	Cuentas
+		JOIN Sucursales ON Cuentas.nombreSuc = Sucursales.nombreSuc
+WHERE	ciudadsuc = "Brooklyn"
+GROUP BY Cuentas.nombreSuc;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">nombreSuc</th>
+<th class="tableblock halign-left valign-top">SaldoTotal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brighton</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30000</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 48. Mostrar la suma de saldos de las cuentas con saldo mayor que 20000 agrupadas por ciudad. Mostrar sólo las ciudades con una suma de saldos superior a 100000</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	ciudadSuc, SUM(saldo) AS SaldoTotal
+FROM	Cuentas
+		JOIN Sucursales ON Cuentas.nombreSuc = Sucursales.nombreSuc
+WHERE	saldo &gt; 20000
+GROUP BY ciudadSuc
+HAVING	SUM(saldo) &gt; 100000;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ciudadSuc</th>
+<th class="tableblock halign-left valign-top">SaldoTotal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Horseneck</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">120000</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 49. Mostrar nombre de cliente, número de cuenta y saldo de las cuentas con saldo mayor que la media de los saldos de todas las cuentas</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	nombrecli, CtaCli.numeroCta, saldo
+FROM	Clientes
+		JOIN CtaCli ON Clientes.dniCli = CtaCli.dniCli
+        JOIN Cuentas ON CtaCli.numeroCta = Cuentas.numeroCta
+WHERE	Cuentas.numerocta IN (
+          SELECT	numerocta
+          FROM	Cuentas
+          WHERE	saldo &gt; (SELECT AVG(saldo) FROM Cuentas)
+  		);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">nombreCli</th>
+<th class="tableblock halign-left valign-top">numeroCta</th>
+<th class="tableblock halign-left valign-top">saldo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hayes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">40000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Turner</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Williams</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lindsay</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Green</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Johnson</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60000</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 50. Mostrar las cuentas compartidas junto con los nombres de los clientes que las comparten (una cuenta compartida es aquella que tiene más de un titular)</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	nombreCli,
+		CtaCli.numeroCta
+FROM	Clientes
+		JOIN CtaCli ON Clientes.dniCli = CtaCli.dniCli
+        JOIN (
+              SELECT	numeroCta
+              FROM		CtaCli
+              GROUP BY	numeroCta
+              HAVING	COUNT(*) &gt; 1
+              ) Aux ON CtaCli.numeroCta = Aux.numeroCta;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">nombreCli</th>
+<th class="tableblock halign-left valign-top">numeroCta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Turner</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Williams</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lindsay</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Green</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Johnson</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 51. Mostrar todas las sucursales, aunque no tengan cuentas, con el número de cuentas que tienen y el saldo total de las cuentas. Las sucursales sin cuentas tendrán 0 en el número de cuentas y en el saldo total</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	Sucursales.nombreSuc, 
+		COUNT(Cuentas.numeroCta) AS cantidadCuentas, 
+        coalesce( SUM(saldo) , 0) AS saldoTotal
+FROM	Sucursales
+		LEFT JOIN Cuentas ON Sucursales.nombreSuc = Cuentas.nombreSuc
+GROUP BY Sucursales.nombreSuc;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>La función <code>COALESCE</code> permite mostrar en una columna un valor por defecto en lugar de <code>NULL</code>. Su sintaxis es <code>COALESCE(expresión, valorPorDefecto)</code>. Por ejemplo, <code>COALESCE(calificacion, 'no presentado')</code> mostrará <code>no presentado</code> en lugar de <code>NULL</code> si <code>calificacion</code> es <code>NULL</code>. En caso contrario, mostrará el valor que tenga <code>calificacion</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">nombreSuc</th>
+<th class="tableblock halign-left valign-top">cantidadCuentas</th>
+<th class="tableblock halign-left valign-top">saldoTotal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Almeria</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brighton</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Downtown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mianus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">North Town</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Perrydge</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">70000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pownal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redwood</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Round Hill</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="title">Example 52. Mostrar la cuenta con el saldo más alto. Mostrar el número de cuenta, el saldo y los nombres de los clientes titulares.</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">SELECT	Aux.numeroCta,
+        Aux.saldo,
+        nombreCli,
+FROM	Clientes
+		JOIN CtaCli ON Clientes.dniCli = CtaCli.dniCli
+        JOIN (
+          SELECT	*
+          FROM	Cuentas
+          WHERE	saldo = (SELECT MAX(saldo) FROM Cuentas)
+          ) Aux ON CtaCli.numeroCta = Aux.numeroCta;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">numeroCta</th>
+<th class="tableblock halign-left valign-top">saldo</th>
+<th class="tableblock halign-left valign-top">nombreCli</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Green</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Johnson</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-02 07:17:46 +0200
+Last updated 2024-04-03 11:17:05 +0200
 </div>
 </div>
 </body>

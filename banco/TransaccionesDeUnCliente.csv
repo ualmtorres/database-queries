@@ -1,0 +1,5 @@
+"numeroCta","nombreSuc","numeroTrans","fecha","importe"
+"1","Downtown","1","10/10/2012","10000"
+"2","Downtown","1","10/10/2012","30000"
+"2","Downtown","2","11/10/2012","-20000"
+"6","Brighton","1","13/10/2012","60000"
